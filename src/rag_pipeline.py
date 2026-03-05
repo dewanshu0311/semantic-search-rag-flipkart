@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import logging
 import os
-import textwrap
 from typing import List, Optional
 
 from src.retriever import DenseRetriever, SearchResult

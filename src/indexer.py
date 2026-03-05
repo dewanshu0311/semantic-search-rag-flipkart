@@ -75,8 +75,9 @@ class FAISSIndexer:
             self.index.train(vectors)
         t0 = time.perf_counter()
         self.index.add(vectors)
-        logger.info("Added %d vectors in %.2f s  (total=%d)",
-                     len(vectors), time.perf_counter() - t0, self.index.ntotal)
+        logger.info(
+            "Added %d vectors in %.2f s  (total=%d)",
+            len(vectors), time.perf_counter() - t0, self.index.ntotal)
 
     # ── Search ─────────────────────────────────────────────────────────
     def search(self, query_vec: np.ndarray, k: int = 5) -> tuple[np.ndarray, np.ndarray]:

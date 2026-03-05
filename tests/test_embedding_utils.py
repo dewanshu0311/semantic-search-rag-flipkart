@@ -1,6 +1,5 @@
 """Tests for embedding utilities."""
 import numpy as np
-import pytest
 
 
 def test_embedding_dimensions():

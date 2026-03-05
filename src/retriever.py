@@ -16,8 +16,6 @@ import logging
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
-import numpy as np
-
 from src.embedding_model import EmbeddingModel
 from src.indexer import FAISSIndexer
 

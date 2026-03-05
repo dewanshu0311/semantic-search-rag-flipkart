@@ -78,7 +78,7 @@ def plot_embeddings_2d(
         unique_labels = sorted(set(labels))
         cmap = plt.cm.get_cmap("tab10", len(unique_labels))
         for i, label in enumerate(unique_labels):
-            mask = np.array([l == label for l in labels])
+            mask = np.array([lbl == label for lbl in labels])
             ax.scatter(
                 coords[mask, 0], coords[mask, 1],
                 c=[cmap(i)], label=str(label), alpha=0.6, s=15,
@@ -140,7 +140,6 @@ def plot_product_rating_heatmap(
     """
     Heatmap: average rating per product × sentiment.
     """
-    import pandas as pd
     pivot = df.pivot_table(
         values=rating_col,
         index=product_col,

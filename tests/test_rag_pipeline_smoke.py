@@ -1,6 +1,4 @@
 """Smoke test for the RAG pipeline on toy data."""
-import numpy as np
-import pytest
 
 
 def test_rag_pipeline_smoke():
