@@ -1,6 +1,27 @@
-# 🔍 Semantic Search & RAG System — Flipkart Product Reviews
+<div align="center">
 
-A production-style **Semantic Search** and **Retrieval-Augmented Generation (RAG)** system built on 205,000+ Flipkart product reviews. Demonstrates that modern NLP can understand user **intent** — not just keywords — to find relevant product information and generate grounded answers.
+# 🔍 Semantic Search & RAG System
+
+### Flipkart Product Reviews · 205K+ Documents
+
+[![CI](https://github.com/dewanshu0311/semantic-search-rag-flipkart/actions/workflows/ci.yaml/badge.svg)](https://github.com/dewanshu0311/semantic-search-rag-flipkart/actions/workflows/ci.yaml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg?logo=python&logoColor=white)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+
+[![SBERT](https://img.shields.io/badge/SBERT-all--MiniLM--L6--v2-00C853.svg)](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)
+[![FAISS](https://img.shields.io/badge/FAISS-Flat%20|%20HNSW%20|%20IVF--PQ-8A2BE2.svg)](https://github.com/facebookresearch/faiss)
+[![BM25](https://img.shields.io/badge/Hybrid-BM25%20+%20Dense-FF6D00.svg)](https://github.com/dorianbrown/rank_bm25)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io)
+
+**A production-style Semantic Search and Retrieval-Augmented Generation system built on 205,000+ Flipkart product reviews — proving that modern NLP can understand user _intent_, not just keywords.**
+
+[Demo](#-streamlit-demo) · [Architecture](#️-architecture-overview) · [Quick Start](#-quick-start) · [Evaluation](#-evaluation-results) · [Insights](#-business-insights)
+
+<img src="docs/screenshots/streamlit_search.png" alt="Semantic search returning intent-matched product reviews" width="85%">
+
+<sub>Semantic search surfacing relevant reviews for a natural-language query</sub>
+
+</div>
 
 ---
 
@@ -16,50 +37,43 @@ This project solves that problem using **dense embeddings** (Sentence-BERT) and 
 
 ## 🏗️ Architecture Overview
 
-```
-                    ┌─────────────────┐
-                    │   User Query    │
-                    └────────┬────────┘
-                             │
-                             ▼
-                ┌────────────────────────┐
-                │  Sentence-BERT (SBERT) │
-                │  all-MiniLM-L6-v2      │
-                │  384-dim embeddings    │
-                └────────────┬───────────┘
-                             │
-                ┌────────────┴───────────┐
-                │                        │
-                ▼                        ▼
-     ┌──────────────────┐   ┌──────────────────┐
-     │  FAISS Vector     │   │  BM25 Keyword    │
-     │  Search (HNSW)    │   │  Search          │
-     └────────┬─────────┘   └────────┬─────────┘
-              │                      │
-              └──────────┬───────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │  Hybrid Score Fusion │
-              │  α·dense + (1-α)·BM25│
-              └──────────┬───────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │  Re-ranker           │
-              │  Rating + Sentiment  │
-              └──────────┬───────────┘
-                         │
-                         ▼
-              ┌──────────────────────┐
-              │  RAG Generator       │
-              │  Context → Answer    │
-              └──────────┬───────────┘
-                         │
-                         ▼
-                  ┌─────────────┐
-                  │   Answer    │
-                  └─────────────┘
+```mermaid
+flowchart TD
+    Q["💬 User Query"]
+
+    subgraph Encode["🧠 Encoding"]
+        SBERT["Sentence-BERT<br/>all-MiniLM-L6-v2 · 384-dim"]
+    end
+
+    subgraph Retrieve["🔎 Parallel Retrieval"]
+        direction LR
+        FAISS["FAISS Vector Search<br/>Flat · HNSW · IVF-PQ"]
+        BM25["BM25 Keyword Search<br/>lexical matching"]
+    end
+
+    FUSE["⚖️ Hybrid Score Fusion<br/>α·dense + (1−α)·BM25"]
+    RERANK["📊 Re-ranker<br/>rating + sentiment weighted"]
+
+    subgraph Generate["✨ Generation"]
+        RAG["RAG Generator<br/>retrieved context → grounded answer"]
+    end
+
+    ANS["✅ Answer with cited reviews"]
+
+    Q --> SBERT
+    SBERT --> FAISS
+    Q --> BM25
+    FAISS --> FUSE
+    BM25 --> FUSE
+    FUSE --> RERANK --> RAG --> ANS
+
+    style Q fill:#1e3a5f,stroke:#4a90d9,color:#fff
+    style Encode fill:#4a2545,stroke:#a855f7,color:#fff
+    style Retrieve fill:#1a4d3e,stroke:#2ea884,color:#fff
+    style FUSE fill:#5c3a1e,stroke:#f97316,color:#fff
+    style RERANK fill:#3d3d1e,stroke:#eab308,color:#fff
+    style Generate fill:#4a2545,stroke:#a855f7,color:#fff
+    style ANS fill:#1e3a5f,stroke:#4a90d9,color:#fff
 ```
 
 ---
